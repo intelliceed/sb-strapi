@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { fetchAPI } from "../utils/fetch-api";
-
-import Loader from "../components/Loader";
-import Blog from "../views/blog-list";
-import PageHeader from "../components/PageHeader";
+import {fetchAPI} from "@/app/[lang]/utils/fetch-api";
+import Loader from "@/app/[lang]/components/Loader";
+import PageHeader from "@/app/[lang]/components/PageHeader";
+import PostList from "@/app/[lang]/views/post-list";
 
 interface Meta {
   pagination: {
@@ -14,7 +13,7 @@ interface Meta {
   };
 }
 
-export default function Profile() {
+export default function Blog() {
   const [meta, setMeta] = useState<Meta | undefined>();
   const [data, setData] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
@@ -69,7 +68,7 @@ export default function Profile() {
   return (
     <div>
       <PageHeader heading="Our Blog" text="Checkout Something Cool" />
-      <Blog data={data}>
+      <PostList data={data}>
         {meta!.pagination.start + meta!.pagination.limit <
           meta!.pagination.total && (
           <div className="flex justify-center">
@@ -82,7 +81,7 @@ export default function Profile() {
             </button>
           </div>
         )}
-      </Blog>
+      </PostList>
     </div>
   );
 }

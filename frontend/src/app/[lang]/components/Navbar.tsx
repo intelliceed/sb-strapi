@@ -1,32 +1,36 @@
 "use client";
 import Logo from "./Logo";
+import cn from 'classnames';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import {useSession} from "@/app/hooks";
+import {signOut} from "next-auth/react";
+import { Dialog } from "@headlessui/react";
+import { usePathname } from "next/navigation";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface NavLink {
   id: number;
   url: string;
   newTab: boolean;
   text: string;
+  isPublic: boolean;
 }
 
 interface MobileNavLink extends NavLink {
   closeMenu: () => void;
 }
 
-function NavLink({ url, text }: NavLink) {
+function NavLink({ url, text, isPublic }: NavLink) {
   const path = usePathname();
+  const session = useSession();
+  const isShown = isPublic || (session?.isSession && !isPublic);
 
   return (
-    <li className="flex">
+      isShown && <li className="flex">
       <Link
         href={url}
-        className={`flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent ${
-          path === url && "dark:text-violet-400 dark:border-violet-400"
-        }}`}
+        className={cn("flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent", path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
       >
         {text}
       </Link>
@@ -44,9 +48,7 @@ function MobileNavLink({ url, text, closeMenu }: MobileNavLink) {
       <Link
         href={url}
         onClick={handleClick}
-        className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-100 hover:bg-gray-900 ${
-          path === url && "dark:text-violet-400 dark:border-violet-400"
-        }}`}
+        className={cn("-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-100 hover:bg-gray-900", path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
       >
         {text}
       </Link>
@@ -79,6 +81,7 @@ export default function Navbar({
             {links.map((item: NavLink) => (
               <NavLink key={item.id} {...item} />
             ))}
+            <AuthButton/>
           </ul>
         </div>
 
@@ -129,4 +132,13 @@ export default function Navbar({
       </div>
     </div>
   );
+}
+
+const AuthButton = () => {
+  const session = useSession();
+  const isSession = session?.status === 'authenticated';
+
+  return isSession
+        ? <li className="flex"><button onClick={() => signOut()} className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent">Log out</button></li>
+        : <NavLink isPublic id={1231312123} newTab={false} text="Sign in" url="/en/sign-in"/>
 }

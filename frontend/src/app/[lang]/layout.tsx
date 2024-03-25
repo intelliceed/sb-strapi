@@ -8,7 +8,7 @@ import Banner from "./components/Banner";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import {FALLBACK_SEO} from "@/app/[lang]/utils/constants";
-
+import {Providers} from "@/app/providers";
 
 async function getGlobal(lang: string): Promise<any> {
   const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
@@ -63,7 +63,7 @@ export default async function RootLayout({
   const global = await getGlobal(params.lang);
   // TODO: CREATE A CUSTOM ERROR PAGE
   if (!global.data) return null;
-  
+
   const { notificationBanner, navbar, footer } = global.data.attributes;
 
   const navbarLogoUrl = getStrapiMedia(
@@ -77,26 +77,26 @@ export default async function RootLayout({
   return (
     <html lang={params.lang}>
       <body>
-        <Navbar
-          links={navbar.links}
-          logoUrl={navbarLogoUrl}
-          logoText={navbar.navbarLogo.logoText}
-        />
+        <Providers>
+          <Navbar
+            links={navbar.links}
+            logoUrl={navbarLogoUrl}
+            logoText={navbar.navbarLogo.logoText}
+          />
 
-        <main className="dark:bg-black dark:text-gray-100 min-h-screen">
-          {children}
-        </main>
+          <main className="dark:bg-black dark:text-gray-100 min-h-screen">{children}</main>
 
-        <Banner data={notificationBanner} />
+          <Banner data={notificationBanner} />
 
-        <Footer
-          logoUrl={footerLogoUrl}
-          logoText={footer.footerLogo.logoText}
-          menuLinks={footer.menuLinks}
-          categoryLinks={footer.categories.data}
-          legalLinks={footer.legalLinks}
-          socialLinks={footer.socialLinks}
-        />
+          <Footer
+            logoUrl={footerLogoUrl}
+            logoText={footer.footerLogo.logoText}
+            menuLinks={footer.menuLinks}
+            categoryLinks={footer.categories.data}
+            legalLinks={footer.legalLinks}
+            socialLinks={footer.socialLinks}
+          />
+        </Providers>
       </body>
     </html>
   );
