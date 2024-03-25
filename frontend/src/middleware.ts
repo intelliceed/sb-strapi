@@ -1,10 +1,11 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-
-import { i18n } from '../i18n-config';
-
-import { match as matchLocale } from '@formatjs/intl-localematcher';
+// outsource dependencies
 import Negotiator from 'negotiator';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+// local dependencies
+import { i18n } from '../i18n-config';
+import { match as matchLocale } from '@formatjs/intl-localematcher';
 
 function getLocale(request: NextRequest): string | undefined {
     // Negotiator expects plain object so we need to transform headers
@@ -18,7 +19,7 @@ function getLocale(request: NextRequest): string | undefined {
     return matchLocale(languages, locales, i18n.defaultLocale);
 }
 
-export function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
 
     // // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public` manually.
@@ -36,7 +37,6 @@ export function middleware(request: NextRequest) {
     const pathnameIsMissingLocale = i18n.locales.every(
         (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
     );
-
     // Redirect if there is no locale
     if (pathnameIsMissingLocale) {
         const locale = getLocale(request);
@@ -49,5 +49,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     // Matcher ignoring `/_next/` and `/api/`
-    matcher: ['/((?!_next).*)'],
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)',],
 };
