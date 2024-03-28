@@ -1,11 +1,10 @@
-import { getServerSession } from "next-auth";
 import { Debug } from "@/app/[lang]/components/Debug";
-import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getSession } from "@/app/api/auth/iron-session/route";
 
 export default async function Layout ({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(nextAuthOptions);
-  console.log('SESSION', session);
-  if (!session) {
+  const session = await getSession();
+  console.log('yo', session);
+  if (!session?.isLoggedIn) {
     return '404';
   }
   return <div>

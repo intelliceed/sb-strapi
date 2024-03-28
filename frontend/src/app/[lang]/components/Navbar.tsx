@@ -3,11 +3,9 @@ import Logo from "./Logo";
 import cn from 'classnames';
 import Link from "next/link";
 import React, { useState } from "react";
-import { useSession } from "@/app/hooks";
-import { signOut } from "next-auth/react";
 import { Dialog } from "@headlessui/react";
-import { SessionStatus } from "@/app/types";
-import { usePathname } from "next/navigation";
+import { useSession } from "@/app/hooks/iron-session";
+import { usePathname, useRouter } from "next/navigation";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface NavLink {
@@ -24,9 +22,8 @@ interface MobileNavLink extends NavLink {
 
 function NavLink ({ url, text, isPublic }: NavLink) {
   const path = usePathname();
-  const session = useSession();
-  const isLoading = session?.status === SessionStatus.loading;
-  const isShown = isLoading || isPublic || (session?.isSession && !isPublic);
+  const { session, isLoading } = useSession();
+  const isShown = isLoading || isPublic || (session.isLoggedIn && !isPublic);
   
   return isShown && <li className="flex">
     <Link
@@ -135,16 +132,21 @@ export default function Navbar ({
 }
 
 const AuthButton = () => {
-  const session = useSession();
-  const isSession = session?.status === SessionStatus.authenticated;
-  const isLoading = session?.status === SessionStatus.loading;
+  const { session, logout, isLoading } = useSession();
+  const isSession = session.isLoggedIn;
+  const router = useRouter();
+  
+  const handleLogout = () => {
+    logout();
+    router.push('/sign-in');
+  };
   
   return isLoading ? <li className="flex">
     <button className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent text-transparent bg-[#e5e7eb] rounded">Log out</button>
   </li> : <>
     {isSession
       ? <li className="flex">
-        <button onClick={() => signOut()} className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent">Log out</button>
+        <button onClick={handleLogout} className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent">Log out</button>
       </li>
       : <NavLink isPublic id={1231312123} newTab={false} text="Sign in" url="/en/sign-in"/>}
   </>;
