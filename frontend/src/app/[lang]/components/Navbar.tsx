@@ -26,13 +26,13 @@ function NavLink ({ url, text, isPublic }: NavLink) {
   const isShown = isLoading || isPublic || (session.isLoggedIn && !isPublic);
   
   return isShown && <li className="flex">
-    <Link
-      href={url}
-      className={cn("flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent", isLoading ? 'text-transparent bg-[#e5e7eb] rounded' : null, path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
-    >
+		<Link
+			href={url}
+			className={cn("flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent", isLoading ? 'text-transparent bg-[#e5e7eb] rounded' : null, path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
+		>
       {text}
-    </Link>
-  </li>;
+		</Link>
+	</li>;
 }
 
 function MobileNavLink ({ url, text, closeMenu }: MobileNavLink) {
