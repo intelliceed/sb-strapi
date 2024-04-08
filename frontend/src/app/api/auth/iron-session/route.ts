@@ -5,7 +5,7 @@ import { getIronSession } from "iron-session";
 
 // local dependencies
 import { signIn } from '@/services/auth';
-import { defaultSession, SessionData, sessionOptions, sleep } from "@/app/constants/iron-session";
+import { defaultSession, SessionData, sessionOptions } from "@/app/constants/iron-session";
 
 // login
 export async function POST (request: NextRequest) {
@@ -24,9 +24,6 @@ export async function POST (request: NextRequest) {
 export async function GET () {
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-  // simulate looking up the user in db
-  await sleep(250);
-
   if (!session.isLoggedIn) {
     return Response.json(defaultSession);
   }
@@ -42,16 +39,11 @@ export async function DELETE () {
   return Response.json(defaultSession);
 }
 
-export async function getSession (shouldSleep = true) {
+export async function getSession () {
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
   console.log('session', session);
   if (!session.isLoggedIn) {
     return defaultSession;
-  }
-
-  if (shouldSleep) {
-    // simulate looking up the user in db
-    await sleep(250);
   }
   return session;
 }
