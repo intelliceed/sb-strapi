@@ -9,14 +9,19 @@ export default function SignIn () {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // sign in here
-    await login({
-      email: e.target.email.value,
-      password: e.target.password.value,
-    });
+    try {
+      await login({
+        email: e.target.email.value,
+        password: e.target.password.value,
+      });
 
-    // NOTE: After Signing In/Out: Use window.location.href to ensure that any page the user navigates to next fully
-    // reflects their new authentication state, fetching all data fresh from the server
-    window.location.href = '/private/blog';
+      // NOTE: After Signing In/Out: Use window.location.href to ensure that any page the user navigates to next fully
+      // reflects their new authentication state, fetching all data fresh from the server
+      window.location.href = '/private/blog';
+    } catch (e) {
+      const error = e as Error
+      console.log(error.message);
+    }
   };
 
   return <form onSubmit={handleSubmit} className="flex flex-col max-w-[240px] mx-auto">
@@ -34,7 +39,8 @@ export default function SignIn () {
     />
     <button
       className="bg-black mb-2 p-1 rounded-lg text-white hover:bg-gray-700 transition"
-    >Submit</button>
+    >Submit
+    </button>
     <a
       href="http://local-strapi.ua/api/connect/google"
       className="text-center bg-black mb-2 p-1 rounded-lg text-white hover:bg-gray-700 transition"

@@ -76,14 +76,14 @@ export default async function RootLayout ({
   );
 
   return <html lang={params.lang}>
-    <body>
+    <body className="flex flex-col min-h-screen">
       <Navbar
         links={navbar.links}
         logoUrl={navbarLogoUrl}
         logoText={navbar.navbarLogo.logoText}
       />
 
-      <main className="dark:bg-black dark:text-gray-100 min-h-screen">{children}</main>
+      <main className="dark:bg-black dark:text-gray-100 mb-10 flex-grow">{children}</main>
 
       <Banner data={notificationBanner}/>
 

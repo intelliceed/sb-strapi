@@ -1,19 +1,32 @@
+// outsource dependencies
 import qs from "qs";
+
+// local dependencies
 import { getStrapiURL } from "./api-helpers";
+
+type Options = {
+  [key: string]: string | number | object | undefined,
+  headers?: {
+    'Content-Type'?: string,
+    Authorization?: string,
+  }
+}
 
 export async function fetchAPI (
   path: string,
   urlParamsObject = {},
-  options = {}
+  options: Options = {}
 ) {
+  const { headers = {}, ...attr } = options;
   try {
     // Merge default and user options
     const mergedOptions = {
       next: { revalidate: 60 },
       headers: {
         "Content-Type": "application/json",
+        ...headers
       },
-      ...options,
+      ...attr,
     };
 
     // Build request URL

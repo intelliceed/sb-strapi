@@ -1,9 +1,14 @@
 "use client";
+
+// outsource dependencies
 import { useState, useEffect, useCallback } from "react";
-import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
+
+// local dependencies
+import { ENV } from "@/app/constants/env";
 import Loader from "@/app/[lang]/components/Loader";
-import PageHeader from "@/app/[lang]/components/PageHeader";
 import PostList from "@/app/[lang]/views/post-list";
+import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
+import PageHeader from "@/app/[lang]/components/PageHeader";
 
 interface Meta {
   pagination: {
@@ -17,6 +22,7 @@ export default function Blog () {
   const [meta, setMeta] = useState<Meta | undefined>();
   const [data, setData] = useState<any>([]);
   const [isLoading, setLoading] = useState(true);
+  const [selectedAuthorName, setSelectedAuthorName] = useState<string | undefined>();
 
   const fetchData = useCallback(async (start: number, limit: number) => {
     setLoading(true);
@@ -36,15 +42,18 @@ export default function Blog () {
           start: start,
           limit: limit,
         },
+        filters: {
+          authorsBio: {
+            name: {
+              $eq: selectedAuthorName
+            }
+          }
+        }
       };
       const options = { headers: { Authorization: `Bearer ${token}` } };
       const responseData = await fetchAPI(path, urlParamsObject, options);
 
-      if (start === 0) {
-        setData(responseData.data);
-      } else {
-        setData((prevData: any[]) => [...prevData, ...responseData.data]);
-      }
+      setData(start === 0 ? responseData.data : (prevData: any[]) => [...prevData, ...responseData.data]);
 
       setMeta(responseData.meta);
     } catch (error) {
@@ -52,15 +61,15 @@ export default function Blog () {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedAuthorName]);
 
   function loadMorePosts (): void {
     const nextPosts = meta!.pagination.start + meta!.pagination.limit;
-    fetchData(nextPosts, Number(process.env.NEXT_PUBLIC_PAGE_LIMIT));
+    fetchData(nextPosts, ENV.NEXT_PUBLIC_PAGE_LIMIT);
   }
 
   useEffect(() => {
-    fetchData(0, Number(process.env.NEXT_PUBLIC_PAGE_LIMIT));
+    fetchData(0, ENV.NEXT_PUBLIC_PAGE_LIMIT);
   }, [fetchData]);
 
   if (isLoading) return <Loader/>;
@@ -68,7 +77,7 @@ export default function Blog () {
   return (
     <div>
       <PageHeader heading="Our Blog" text="Checkout Something Cool"/>
-      <PostList data={data}>
+      <PostList data={data} onChangeAuthorNameFilter={setSelectedAuthorName}>
         {meta!.pagination.start + meta!.pagination.limit <
           meta!.pagination.total && (
             <div className="flex justify-center">
