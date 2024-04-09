@@ -1,10 +1,14 @@
 "use client";
-import { usePathname } from "next/navigation";
+
+// outsource dependencies
 import Link from "next/link";
-import Logo from "./Logo";
 import { CgWebsite } from "react-icons/cg";
 import { FaDiscord } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 import { AiFillTwitterCircle, AiFillYoutube } from "react-icons/ai";
+
+// local dependencies
+import Logo from "./Logo";
 
 interface FooterLink {
   id: number;
@@ -22,36 +26,30 @@ interface CategoryLink {
   };
 }
 
-function FooterLink({ url, text }: FooterLink) {
+function FooterLink ({ url, text }: FooterLink) {
   const path = usePathname();
-  return (
-    <li className="flex">
-      <Link
-        href={url}
-        className={`hover:dark:text-violet-400 ${
-          path === url && "dark:text-violet-400 dark:border-violet-400"
-        }}`}
-      >
-        {text}
-      </Link>
-    </li>
-  );
+  return <li className="flex">
+    <Link
+      href={url}
+      className={`hover:dark:text-violet-400 ${path !== url ? '' : "dark:text-violet-400 dark:border-violet-400"}`}
+    >
+      {text}
+    </Link>
+  </li>;
 }
 
-function CategoryLink({ attributes }: CategoryLink) {
-  return (
-    <li className="flex">
-      <Link
-        href={`/blog/${attributes.slug}`}
-        className="hover:dark:text-violet-400"
-      >
-        {attributes.name}
-      </Link>
-    </li>
-  );
+function CategoryLink ({ attributes }: CategoryLink) {
+  return <li className="flex">
+    <Link
+      href={`/blog/${attributes.slug}`}
+      className="hover:dark:text-violet-400"
+    >
+      {attributes.name}
+    </Link>
+  </li>;
 }
 
-function RenderSocialIcon({ social }: { social: string | undefined }) {
+function RenderSocialIcon ({ social }: { social: string | undefined }) {
   switch (social) {
     case "WEBSITE":
       return <CgWebsite />;
@@ -66,7 +64,7 @@ function RenderSocialIcon({ social }: { social: string | undefined }) {
   }
 }
 
-export default function Footer({
+export default function Footer ({
   logoUrl,
   logoText,
   menuLinks,

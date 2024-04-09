@@ -19,6 +19,11 @@
     "text": {
       "type": "string",
       "required": true
+    },
+    "isPublic": {
+      "type": "boolean",
+      "default": true,
+      "required": true
     }
   }
 }

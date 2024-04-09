@@ -1,63 +1,60 @@
 "use client";
 import Logo from "./Logo";
+import cn from 'classnames';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
+import { useSession } from "@/app/hooks/iron-session";
+import { usePathname, useRouter } from "next/navigation";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
 
 interface NavLink {
   id: number;
   url: string;
   newTab: boolean;
   text: string;
+  isPublic: boolean;
 }
 
 interface MobileNavLink extends NavLink {
   closeMenu: () => void;
 }
 
-function NavLink({ url, text }: NavLink) {
+function NavLink ({ url, text, isPublic }: NavLink) {
   const path = usePathname();
-
-  return (
-    <li className="flex">
-      <Link
-        href={url}
-        className={`flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent ${
-          path === url && "dark:text-violet-400 dark:border-violet-400"
-        }}`}
-      >
-        {text}
-      </Link>
-    </li>
-  );
+  const { session, isLoading } = useSession();
+  const isShown = isLoading || isPublic || (session.isLoggedIn && !isPublic);
+  
+  return isShown && <li className="flex">
+		<Link
+			href={url}
+			className={cn("flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent", isLoading ? 'text-transparent bg-[#e5e7eb] rounded' : null, path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
+		>
+      {text}
+		</Link>
+	</li>;
 }
 
-function MobileNavLink({ url, text, closeMenu }: MobileNavLink) {
+function MobileNavLink ({ url, text, closeMenu }: MobileNavLink) {
   const path = usePathname();
   const handleClick = () => {
     closeMenu();
   };
-  return (
-    <a className="flex">
-      <Link
-        href={url}
-        onClick={handleClick}
-        className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-100 hover:bg-gray-900 ${
-          path === url && "dark:text-violet-400 dark:border-violet-400"
-        }}`}
-      >
-        {text}
-      </Link>
-    </a>
-  );
+  return <a className="flex">
+    <Link
+      href={url}
+      onClick={handleClick}
+      className={cn("-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-100 hover:bg-gray-900", path !== url ? null : "dark:text-violet-400 dark:border-violet-400")}
+    >
+      {text}
+    </Link>
+  </a>;
 }
 
-export default function Navbar({
+export default function Navbar ({
   links,
   logoUrl,
-  logoText,
+  logoText
 }: {
   links: Array<NavLink>;
   logoUrl: string | null;
@@ -73,28 +70,31 @@ export default function Navbar({
         <Logo src={logoUrl}>
           {logoText && <h2 className="text-2xl font-bold">{logoText}</h2>}
         </Logo>
-
+        
         <div className="items-center flex-shrink-0 hidden lg:flex">
           <ul className="items-stretch hidden space-x-3 lg:flex">
             {links.map((item: NavLink) => (
               <NavLink key={item.id} {...item} />
             ))}
+            <AuthButton/>
           </ul>
         </div>
-
+        
         <Dialog
           as="div"
           className="lg:hidden"
           open={mobileMenuOpen}
           onClose={setMobileMenuOpen}
         >
-          <div className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75" />{" "}
+          <div className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75"/>
+          {" "}
           {/* Overlay */}
-          <Dialog.Panel className="fixed inset-y-0 rtl:left-0 ltr:right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-inset sm:ring-white/10">
+          <Dialog.Panel
+            className="fixed inset-y-0 rtl:left-0 ltr:right-0 z-50 w-full overflow-y-auto bg-gray-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-inset sm:ring-white/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Strapi</span>
-                {logoUrl && <img className="h-8 w-auto" src={logoUrl} alt="" />}
+                {logoUrl && <img className="h-8 w-auto" src={logoUrl} alt=""/>}
               </a>
               <button
                 type="button"
@@ -102,7 +102,7 @@ export default function Navbar({
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="sr-only">Close menu</span>
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                <XMarkIcon className="h-6 w-6" aria-hidden="true"/>
               </button>
             </div>
             <div className="mt-6 flow-root">
@@ -124,9 +124,30 @@ export default function Navbar({
           className="p-4 lg:hidden"
           onClick={() => setMobileMenuOpen(true)}
         >
-          <Bars3Icon className="h-7 w-7 text-gray-100" aria-hidden="true" />
+          <Bars3Icon className="h-7 w-7 text-gray-100" aria-hidden="true"/>
         </button>
       </div>
     </div>
   );
 }
+
+const AuthButton = () => {
+  const { session, logout, isLoading } = useSession();
+  const isSession = session.isLoggedIn;
+  const router = useRouter();
+  
+  const handleLogout = () => {
+    logout();
+    router.push('/sign-in');
+  };
+  
+  return isLoading ? <li className="flex">
+    <button className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent text-transparent bg-[#e5e7eb] rounded">Log out</button>
+  </li> : <>
+    {isSession
+      ? <li className="flex">
+        <button onClick={handleLogout} className="flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent">Log out</button>
+      </li>
+      : <NavLink isPublic id={1231312123} newTab={false} text="Sign in" url="/en/sign-in"/>}
+  </>;
+};
