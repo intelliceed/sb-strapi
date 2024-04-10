@@ -20,14 +20,13 @@ interface Meta {
 
 export default function Blog () {
   const [meta, setMeta] = useState<Meta | undefined>();
-  const [data, setData] = useState<any>([]);
+  const [data, setData] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [selectedAuthorName, setSelectedAuthorName] = useState<string | undefined>();
 
   const fetchData = useCallback(async (start: number, limit: number) => {
     setLoading(true);
     try {
-      const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
       const path = `/articles`;
       const urlParamsObject = {
         sort: { createdAt: "desc" },
@@ -50,8 +49,7 @@ export default function Blog () {
           }
         }
       };
-      const options = { headers: { Authorization: `Bearer ${token}` } };
-      const responseData = await fetchAPI(path, urlParamsObject, options);
+      const responseData = await fetchAPI(path, urlParamsObject);
 
       setData(start === 0 ? responseData.data : (prevData: any[]) => [...prevData, ...responseData.data]);
 
@@ -72,25 +70,23 @@ export default function Blog () {
     fetchData(0, ENV.NEXT_PUBLIC_PAGE_LIMIT);
   }, [fetchData]);
 
-  if (isLoading) return <Loader/>;
+  if (isLoading && data.length === 0) return <Loader />;
 
-  return (
-    <div>
-      <PageHeader heading="Our Blog" text="Checkout Something Cool"/>
-      <PostList data={data} onChangeAuthorNameFilter={setSelectedAuthorName}>
-        {meta!.pagination.start + meta!.pagination.limit <
-          meta!.pagination.total && (
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className="px-6 py-3 text-sm rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
-                onClick={loadMorePosts}
-              >
-                Load more posts...
-              </button>
-            </div>
-          )}
-      </PostList>
-    </div>
-  );
+  return <div>
+    <PageHeader heading="Our Blog" text="Checkout Something Cool" />
+    <PostList data={data} onChangeAuthorNameFilter={setSelectedAuthorName}>
+      {meta!.pagination.start + meta!.pagination.limit <
+        meta!.pagination.total && (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={loadMorePosts}
+              className="px-6 py-3 text-sm rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
+            >
+              Load more posts...
+            </button>
+          </div>
+        )}
+    </PostList>
+  </div>;
 }

@@ -18,12 +18,15 @@ export async function fetchAPI (
   options: Options = {}
 ) {
   const { headers = {}, ...attr } = options;
+  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+
   try {
     // Merge default and user options
     const mergedOptions = {
       next: { revalidate: 60 },
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
         ...headers
       },
       ...attr,
