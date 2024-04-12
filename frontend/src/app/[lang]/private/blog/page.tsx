@@ -20,7 +20,7 @@ interface Meta {
 
 export default function Blog () {
   const [meta, setMeta] = useState<Meta | undefined>();
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Array<any>>([]);
   const [isLoading, setLoading] = useState(true);
   const [selectedAuthorName, setSelectedAuthorName] = useState<string | undefined>();
 

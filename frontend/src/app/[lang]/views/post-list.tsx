@@ -4,6 +4,7 @@ import Image from "next/image";
 
 // local dependencies
 import { getStrapiMedia, formatDate } from "../utils/api-helpers";
+import { preparePrivateBlogArticleLink } from "@/services/link";
 
 // config
 interface Article {
@@ -69,7 +70,7 @@ export default function PostList ({
 
         const avatarUrl = getStrapiMedia(authorsBio?.avatar.data.attributes.url || null);
 
-        return <div className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 lg:w-[300px] xl:min-w-[375px] rounded-2xl overflow-hidden shadow-lg">
+        return <div key={article.id} className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 lg:w-[300px] xl:min-w-[375px] rounded-2xl overflow-hidden shadow-lg">
           {imageUrl && <Image
             width="240"
             height="240"
@@ -91,7 +92,7 @@ export default function PostList ({
 
             <Link
               key={article.id}
-              href={`/private/blog/${category?.slug}/${article.attributes.slug}`}
+              href={preparePrivateBlogArticleLink({ category: category?.slug, slug: article.attributes.slug })}
             >
               <h3 className="text-2xl font-semibold hover:underline focus:underline">{article.attributes.title}</h3>
             </Link>

@@ -61,6 +61,12 @@
       "repeatable": false,
       "component": "shared.seo",
       "required": true
+    },
+    "authors": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::author.author",
+      "inversedBy": "articles"
     }
   }
 }
