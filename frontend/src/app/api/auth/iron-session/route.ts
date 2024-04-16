@@ -41,9 +41,5 @@ export async function DELETE () {
 
 export async function getSession () {
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-  console.log('session', session);
-  if (!session.isLoggedIn) {
-    return defaultSession;
-  }
-  return session;
+  return !session.isLoggedIn ? defaultSession : session;
 }

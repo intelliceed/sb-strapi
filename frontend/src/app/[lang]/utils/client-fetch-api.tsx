@@ -3,7 +3,7 @@ import qs from "qs";
 
 // local dependencies
 import { getStrapiURL } from "./api-helpers";
-import { getSession } from "@/app/api/auth/iron-session/route";
+import { SessionData } from "@/app/constants/iron-session";
 
 type Options = {
   [key: string]: string | number | object | undefined,
@@ -13,23 +13,35 @@ type Options = {
   }
 }
 
-export async function fetchAPI (
+const sessionApiRoute = "/api/auth/iron-session";
+
+async function fetchJson<JSON = unknown> (
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<JSON> {
+  return fetch(input, {
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    ...init,
+  }).then((res) => res.json());
+}
+
+export async function clientFetchAPI (
   path: string,
   urlParamsObject = {},
   options: Options = {}
 ) {
   const { headers = {}, ...attr } = options;
-  // TODO remove this everywhere
-  // const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
   try {
-    const { jwt } = await getSession();
-    // const jwt = 0;
+    const { jwt } = await fetchJson<SessionData>(sessionApiRoute);
+
     if (jwt) {
       headers.Authorization = `Bearer ${jwt}`;
     }
 
-    // Merge default and user options
     const mergedOptions = {
       next: { revalidate: 60 },
       headers: {

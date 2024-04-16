@@ -40,12 +40,12 @@ export function useSession () {
       fallbackData: defaultSession,
     },
   );
-  
+
   const { trigger: login } = useSWRMutation(sessionApiRoute, doLogin, {
     // the login route already provides the updated information, no need to revalidate
     // revalidate: false,
   });
   const { trigger: logout } = useSWRMutation(sessionApiRoute, doLogout);
-  
+
   return { session, logout, login, isLoading };
 }

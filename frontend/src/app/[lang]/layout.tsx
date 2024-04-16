@@ -12,12 +12,8 @@ import { FALLBACK_SEO } from "@/app/[lang]/utils/constants";
 import { getStrapiMedia, getStrapiURL } from "./utils/api-helpers";
 
 async function getGlobal (lang: string): Promise<any> {
-  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
-
-  if (!token) throw new Error("The Strapi API Token environment variable is not set.");
-
-  const path = `/global`;
-  const options = { headers: { Authorization: `Bearer ${token}` } };
+  // TODO remove it everywhere
+  // const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
   const urlParamsObject = {
     populate: [
@@ -34,7 +30,7 @@ async function getGlobal (lang: string): Promise<any> {
     ],
     locale: lang,
   };
-  return await fetchAPI(path, urlParamsObject, options);
+  return await fetchAPI('/global', urlParamsObject);
 }
 
 export async function generateMetadata ({ params }: { params: { lang: string } }): Promise<Metadata> {
@@ -85,7 +81,7 @@ export default async function RootLayout ({
 
       <main className="dark:bg-black dark:text-gray-100 mb-10 flex-grow">{children}</main>
 
-      <Banner data={notificationBanner}/>
+      <Banner data={notificationBanner} />
 
       <Footer
         logoUrl={footerLogoUrl}

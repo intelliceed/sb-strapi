@@ -7,8 +7,8 @@ import { useState, useEffect, useCallback } from "react";
 import { ENV } from "@/app/constants/env";
 import Loader from "@/app/[lang]/components/Loader";
 import PostList from "@/app/[lang]/views/post-list";
-import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
 import PageHeader from "@/app/[lang]/components/PageHeader";
+import { clientFetchAPI } from "@/app/[lang]/utils/client-fetch-api";
 
 interface Meta {
   pagination: {
@@ -49,7 +49,7 @@ export default function Blog () {
           }
         }
       };
-      const responseData = await fetchAPI(path, urlParamsObject);
+      const responseData = await clientFetchAPI(path, urlParamsObject);
 
       setData(start === 0 ? responseData.data : (prevData: any[]) => [...prevData, ...responseData.data]);
 
