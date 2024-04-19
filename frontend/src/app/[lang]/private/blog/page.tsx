@@ -27,8 +27,7 @@ export default function Blog () {
   const fetchData = useCallback(async (start: number, limit: number) => {
     setLoading(true);
     try {
-      const path = `/articles`;
-      const urlParamsObject = {
+      const params = {
         sort: { createdAt: "desc" },
         populate: {
           cover: { fields: ["url"] },
@@ -49,11 +48,11 @@ export default function Blog () {
           }
         }
       };
-      const responseData = await clientFetchAPI(path, urlParamsObject);
+      const responseData = await clientFetchAPI('/articles', { params });
 
       setData(start === 0 ? responseData.data : (prevData: any[]) => [...prevData, ...responseData.data]);
 
-      setMeta(responseData.meta);
+      setMeta(responseData.data.meta);
     } catch (error) {
       console.error(error);
     } finally {
