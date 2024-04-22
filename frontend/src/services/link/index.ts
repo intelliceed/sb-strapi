@@ -1,12 +1,15 @@
+export const PRIVATE_BLOG = () => {
+  return '/private/blog';
+};
+
 type privateBlogArticle = {
   category: string,
   slug: string,
 }
-
 export const PRIVATE_BLOG_ARTICLE = ({ category, slug }: privateBlogArticle) => {
-  return `/private/blog/${category}/${slug}`;
+  return `${PRIVATE_BLOG()}/${category}/${slug}`;
 };
 
 export const PRIVATE_BLOG_EDIT = () => {
-  return '/private/blog/edit';
+  return `${PRIVATE_BLOG()}/edit`;
 };

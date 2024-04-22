@@ -28,9 +28,6 @@ export default function FormSubmit ({
 
     const res = await clientFetchAPI("/lead-form-submissions",  {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: { data: { email } },
     });
 

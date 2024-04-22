@@ -51,7 +51,7 @@ export default function Blog () {
         }
       };
       const responseData = await clientFetchAPI('/articles', { params });
-      setData(start === 0 ? responseData.data.data : (prevData: any[]) => [...prevData, ...responseData.data]);
+      setData(start === 0 ? responseData.data.data : (prevData: Array<any>) => [...prevData, ...responseData.data.data]);
 
       setMeta(responseData.data.meta);
     } catch (error) {
@@ -75,10 +75,16 @@ export default function Blog () {
   return <div>
     <PageHeader heading="Our Blog" text="Checkout Something Cool" />
     <section className="container flex justify-end px-6 mx-auto">
-      <Link
-        href={PRIVATE_BLOG_EDIT()}
-        className="flex items-center justify-center leading-[11px] bg-[black] text-[white] text-lg p-4 rounded-lg relative after:content-['+'] after:absolute after:top-[-3px] after:translate-y-[12px]"
-      />
+      <div className="flex justify-center md:justify-end w-full">
+        <div className="md:w-[50%] lg:w-[32%] flex justify-center">
+          <div className="max-w-sm lg:w-[300px] xl:min-w-[375px] w-full flex justify-end">
+            <Link
+              href={PRIVATE_BLOG_EDIT()}
+              className="flex justify-center leading-[11px] bg-[black] text-[white] text-lg p-4 rounded-lg relative after:content-['+'] after:absolute after:top-[-3px] after:translate-y-[12px]"
+            />
+          </div>
+        </div>
+      </div>
     </section>
     <PostList data={data} onChangeAuthorNameFilter={setSelectedAuthorName}>
       {meta!.pagination.start + meta!.pagination.limit < meta!.pagination.total && (
