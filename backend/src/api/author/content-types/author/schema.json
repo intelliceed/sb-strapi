@@ -33,6 +33,12 @@
       "relation": "manyToMany",
       "target": "api::article.article",
       "mappedBy": "authors"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "author"
     }
   }
 }
