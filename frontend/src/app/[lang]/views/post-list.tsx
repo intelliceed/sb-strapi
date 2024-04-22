@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 // local dependencies
+import { PRIVATE_BLOG_ARTICLE } from "@/services/link";
 import { getStrapiMedia, formatDate } from "../utils/api-helpers";
-import { preparePrivateBlogArticleLink } from "@/services/link";
 
 // config
 interface Article {
@@ -92,7 +92,7 @@ export default function PostList ({
 
             <Link
               key={article.id}
-              href={preparePrivateBlogArticleLink({ category: category?.slug, slug: article.attributes.slug })}
+              href={PRIVATE_BLOG_ARTICLE({ category: category?.slug, slug: article.attributes.slug })}
             >
               <h3 className="text-2xl font-semibold hover:underline focus:underline">{article.attributes.title}</h3>
             </Link>

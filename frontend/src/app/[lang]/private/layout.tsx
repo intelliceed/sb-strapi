@@ -1,5 +1,4 @@
 // local dependencies
-import { Debug } from "@/app/[lang]/components/Debug";
 import { getSession } from "@/app/api/auth/iron-session/route";
 
 export default async function Layout ({ children }: { children: React.ReactNode }) {
@@ -19,8 +18,5 @@ export default async function Layout ({ children }: { children: React.ReactNode 
   if (!session?.isLoggedIn) {
     return '404';
   }
-  return <div>
-    <Debug session={session}></Debug>
-    {children}
-  </div>;
+  return <div className="private-layout">{children}</div>;
 }

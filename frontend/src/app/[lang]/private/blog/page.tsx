@@ -1,10 +1,12 @@
 "use client";
 
 // outsource dependencies
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 
 // local dependencies
 import { ENV } from "@/app/constants/env";
+import { PRIVATE_BLOG_EDIT } from "@/services/link";
 import Loader from "@/app/[lang]/components/Loader";
 import PostList from "@/app/[lang]/views/post-list";
 import PageHeader from "@/app/[lang]/components/PageHeader";
@@ -49,8 +51,7 @@ export default function Blog () {
         }
       };
       const responseData = await clientFetchAPI('/articles', { params });
-
-      setData(start === 0 ? responseData.data : (prevData: any[]) => [...prevData, ...responseData.data]);
+      setData(start === 0 ? responseData.data.data : (prevData: any[]) => [...prevData, ...responseData.data]);
 
       setMeta(responseData.data.meta);
     } catch (error) {
@@ -73,19 +74,24 @@ export default function Blog () {
 
   return <div>
     <PageHeader heading="Our Blog" text="Checkout Something Cool" />
+    <section className="container flex justify-end px-6 mx-auto">
+      <Link
+        href={PRIVATE_BLOG_EDIT()}
+        className="flex items-center justify-center leading-[11px] bg-[black] text-[white] text-lg p-4 rounded-lg relative after:content-['+'] after:absolute after:top-[-3px] after:translate-y-[12px]"
+      />
+    </section>
     <PostList data={data} onChangeAuthorNameFilter={setSelectedAuthorName}>
-      {meta!.pagination.start + meta!.pagination.limit <
-        meta!.pagination.total && (
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={loadMorePosts}
-              className="px-6 py-3 text-sm rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
-            >
-              Load more posts...
-            </button>
-          </div>
-        )}
+      {meta!.pagination.start + meta!.pagination.limit < meta!.pagination.total && (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={loadMorePosts}
+            className="px-6 py-3 text-sm rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
+          >
+            Load more posts...
+          </button>
+        </div>
+      )}
     </PostList>
   </div>;
 }
