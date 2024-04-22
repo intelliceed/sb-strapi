@@ -692,7 +692,7 @@ export interface ApiArticleArticle extends Schema.CollectionType {
     description: 'Create your blog content';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     title: Attribute.String;
@@ -730,7 +730,6 @@ export interface ApiArticleArticle extends Schema.CollectionType {
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::article.article',
       'oneToOne',
