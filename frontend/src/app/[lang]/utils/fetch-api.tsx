@@ -24,7 +24,6 @@ export async function fetchAPI (
 
   try {
     const { jwt } = await getSession();
-    // const jwt = 0;
     if (jwt) {
       headers.Authorization = `Bearer ${jwt}`;
     }

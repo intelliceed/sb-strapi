@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "logs",
+  "info": {
+    "singularName": "log",
+    "pluralName": "logs",
+    "displayName": "Log",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "log": {
+      "type": "text"
+    },
+    "json": {
+      "type": "json"
+    }
+  }
+}

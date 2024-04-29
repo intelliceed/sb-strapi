@@ -1,29 +1,25 @@
-import ArticleSelect from "@/app/[lang]/components/ArticleSelect";
+// local dependencies
 import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
+import ArticleSelect from "@/app/[lang]/components/ArticleSelect";
 
-async function fetchSideMenuData(filter: string) {
+async function fetchSideMenuData (filter: string) {
   try {
-    const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
-    const options = { headers: { Authorization: `Bearer ${token}` } };
-
     const categoriesResponse = await fetchAPI(
       "/categories",
       { populate: "*" },
-      options
     );
 
     const articlesResponse = await fetchAPI(
       "/articles",
       filter
         ? {
-            filters: {
-              category: {
-                name: filter,
-              },
+          filters: {
+            category: {
+              name: filter,
             },
-          }
+          },
+        }
         : {},
-      options
     );
 
     return {
@@ -59,7 +55,7 @@ interface Data {
   categories: Category[];
 }
 
-export default async function LayoutRoute({
+export default async function LayoutRoute ({
   params,
   children,
 }: {
@@ -85,29 +81,5 @@ export default async function LayoutRoute({
         </aside>
       </div>
     </section>
-  );
-}
-
-export async function generateStaticParams() {
-  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
-  const path = `/articles`;
-  const options = { headers: { Authorization: `Bearer ${token}` } };
-  const articleResponse = await fetchAPI(
-    path,
-    {
-      populate: ["category"],
-    },
-    options
-  );
-
-  return articleResponse.data.map(
-    (article: {
-      attributes: {
-        slug: string;
-        category: {
-          slug: string;
-        };
-      };
-    }) => ({ slug: article.attributes.slug, category: article.attributes.slug })
   );
 }

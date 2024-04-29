@@ -10,7 +10,7 @@ type Options = {
   headers?: {
     'Content-Type'?: string,
     Authorization?: string,
-  }
+  },
 }
 
 const sessionApiRoute = "/api/auth/iron-session";
@@ -28,39 +28,56 @@ async function fetchJson<JSON = unknown> (
   }).then((res) => res.json());
 }
 
+type mergedOptionsType = {
+  next: {
+    revalidate: number
+  },
+  headers: {
+    "Content-Type": string,
+    Authorization?: string | undefined,
+  }
+  body?: string,
+  method: "GET" | "POST" | "PUT" | "DELETE"
+}
+
 export async function clientFetchAPI (
   path: string,
-  urlParamsObject = {},
   options: Options = {}
 ) {
-  const { headers = {}, ...attr } = options;
+  const { headers = {}, body, params, ...attr } = options;
 
-  try {
-    const { jwt } = await fetchJson<SessionData>(sessionApiRoute);
+  const { jwt } = await fetchJson<SessionData>(sessionApiRoute);
 
-    if (jwt) {
-      headers.Authorization = `Bearer ${jwt}`;
-    }
-
-    const mergedOptions = {
-      next: { revalidate: 60 },
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      ...attr,
-    };
-
-    // Build request URL
-    const queryString = qs.stringify(urlParamsObject);
-    const requestUrl = getStrapiURL(`/api${path}${queryString ? `?${queryString}` : ""}`);
-
-    // Trigger API call
-    const response = await fetch(requestUrl, mergedOptions);
-    return await response.json();
-
-  } catch (error) {
-    console.error(error);
-    throw new Error(`Please check if your server is running and you set all the required tokens.`);
+  if (jwt) {
+    headers.Authorization = `Bearer ${jwt}`;
   }
+
+  const mergedOptions: mergedOptionsType = {
+    method: 'GET',
+    next: { revalidate: 60 },
+    headers: {
+      "Content-Type": "application/json",
+      ...headers
+    },
+    ...attr,
+  };
+
+  if (["POST", "PUT", "DELETE"].includes(attr.method as string)) {
+    mergedOptions.body = JSON.stringify(body);
+  }
+
+  // Build request URL
+  const queryString = qs.stringify(params);
+  const requestUrl = getStrapiURL(`/api${path}${queryString ? `?${queryString}` : ""}`);
+
+  // Trigger API call
+  const response = await fetch(requestUrl, mergedOptions);
+  const data = await response.json();
+
+  return {
+    data,
+    ok: response.ok,
+    status: response.status,
+    statusText: response.statusText,
+  };
 }
