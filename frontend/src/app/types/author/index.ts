@@ -9,7 +9,7 @@ export type Author = {
     avatar: {
       data: {
         id: number,
-        attributes: Media
+        attributes?: Media
       }
     }
     articles?: { data: Array<Article> },

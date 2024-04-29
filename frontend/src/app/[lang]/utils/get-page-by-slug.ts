@@ -1,8 +1,11 @@
 // local dependencies
-import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
+import { serverFetchApi } from '@/services/request/server-fetch-api';
 
 export async function getPageBySlug (slug: string, lang: string) {
-  const path = `/pages`;
-  const urlParamsObject = { filters: { slug }, locale: lang };
-  return await fetchAPI(path, urlParamsObject);
+  return await serverFetchApi('/pages', {
+    params: {
+      locale: lang,
+      filters: { slug },
+    }
+  });
 }

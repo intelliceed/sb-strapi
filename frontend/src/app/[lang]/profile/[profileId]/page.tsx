@@ -3,8 +3,8 @@ import Image from 'next/image';
 
 // local dependencies
 import { Debug } from "@/app/[lang]/components/Debug";
-import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
 import { getStrapiMedia } from "@/app/[lang]/utils/api-helpers";
+import { serverFetchApi } from '@/services/request/server-fetch-api';
 
 type User = {
   data: {
@@ -47,13 +47,15 @@ type PageProps = {
 }
 
 export default async function ({ params }: PageProps) {
-  const user: User = await fetchAPI(`/authors/${params.profileId}`, {
-    populate: {
-      avatar: {
-        fields: ['url', 'alternativeText', 'width', 'height']
-      },
-      articles: {
-        fields: ['slug', 'title', 'description']
+  const user: User = await serverFetchApi(`/authors/${params.profileId}`, {
+    params: {
+      populate: {
+        avatar: {
+          fields: ['url', 'alternativeText', 'width', 'height']
+        },
+        articles: {
+          fields: ['slug', 'title', 'description']
+        }
       }
     }
   });

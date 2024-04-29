@@ -7,9 +7,9 @@ import Banner from "./components/Banner";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { i18n } from "../../../i18n-config";
-import { fetchAPI } from "./utils/fetch-api";
 import { FALLBACK_SEO } from "@/app/[lang]/utils/constants";
 import { getStrapiMedia, getStrapiURL } from "./utils/api-helpers";
+import { serverFetchApi } from '@/services/request/server-fetch-api';
 
 async function getGlobal (lang: string): Promise<any> {
   // TODO remove it everywhere
@@ -30,7 +30,9 @@ async function getGlobal (lang: string): Promise<any> {
     ],
     locale: lang,
   };
-  return await fetchAPI('/global', urlParamsObject);
+  return await serverFetchApi('/global', {
+    params: urlParamsObject
+  });
 }
 
 export async function generateMetadata ({ params }: { params: { lang: string } }): Promise<Metadata> {

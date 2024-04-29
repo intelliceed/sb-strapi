@@ -20,7 +20,6 @@ type AuthorsProps = {
 export function Authors ({ authors, className = '', wrapperClassName = '' }: AuthorsProps) {
   const [selectedAuthor, setSelectedAuthor] = useState<Author | undefined | null>(null);
   const [isModalWindowOpened, setIsModalWindowOpened] = useState<boolean>(false);
-
   const handleSelectAuthor = (author: Author) => {
     setSelectedAuthor(author);
     setIsModalWindowOpened(true);
@@ -60,11 +59,11 @@ export function Authors ({ authors, className = '', wrapperClassName = '' }: Aut
       </ModalWindow>
       <div className="flex space-x-1">
         {authors?.map(({ id, attributes }) => {
-          const { url, alternativeText } = attributes.avatar.data.attributes;
+          const { url, alternativeText } = attributes.avatar.data?.attributes || { url: null, alternativeText: null };
           const avatarUrl = getStrapiMedia(url);
           return <button key={id} className={className} onClick={() => handleSelectAuthor({ id, attributes })}>
             {avatarUrl &&
-              <Image title={attributes.name} src={avatarUrl} alt={alternativeText} width={60} height={60} className="rounded-full aspect-square object-cover" />}
+              <Image title={attributes.name} src={avatarUrl} alt={alternativeText || ''} width={60} height={60} className="rounded-full aspect-square object-cover" />}
           </button>;
         })}
       </div>

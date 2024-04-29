@@ -1,6 +1,10 @@
-"use client";
-import { useState } from "react";
-import { clientFetchAPI } from "@/app/[lang]/utils/client-fetch-api";
+'use client';
+
+// outsource dependencies
+import { useState } from 'react';
+
+// local dependencies
+import { clientFetchApi } from '@/services/request/client-fetch-api';
 
 export default function FormSubmit ({
   placeholder,
@@ -9,35 +13,35 @@ export default function FormSubmit ({
   placeholder: string;
   text: string;
 }) {
-  const [email, setEmail] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   async function handleSubmit () {
-    if (email === "") {
-      setErrorMessage("Email cannot be blank.");
+    if (email === '') {
+      setErrorMessage('Email cannot be blank.');
       return;
     }
 
     if (!emailRegex.test(email)) {
-      setErrorMessage("Invalid email format.");
+      setErrorMessage('Invalid email format.');
       return;
     }
 
-    const res = await clientFetchAPI("/lead-form-submissions",  {
-      method: "POST",
+    const res = await clientFetchApi('/lead-form-submissions', {
+      method: 'POST',
       body: { data: { email } },
     });
 
     if (!res.ok) {
-      setErrorMessage("Email failed to submit.");
+      setErrorMessage('Email failed to submit.');
       return;
     }
-    setEmail("");
-    setErrorMessage("");
-    setSuccessMessage("Email successfully submitted!");
+    setEmail('');
+    setErrorMessage('');
+    setSuccessMessage('Email successfully submitted!');
   }
 
   return <div className="flex flex-row items-center self-center justify-center flex-shrink-0 shadow-md lg:justify-end rounded-lg">
@@ -48,7 +52,7 @@ export default function FormSubmit ({
             type="email"
             value={email}
             placeholder={errorMessage || placeholder}
-            className={"w-3/5 p-3 rounded-l-lg sm:w-2/3 text-gray-700"}
+            className={'w-3/5 p-3 rounded-l-lg sm:w-2/3 text-gray-700'}
             onChange={(event) => setEmail(event.target.value)}
           />
           <button

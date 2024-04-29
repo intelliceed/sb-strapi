@@ -1,23 +1,25 @@
 // local dependencies
-import { fetchAPI } from "@/app/[lang]/utils/fetch-api";
 import ArticleSelect from "@/app/[lang]/components/ArticleSelect";
+import { serverFetchApi } from '@/services/request/server-fetch-api';
 
 async function fetchSideMenuData (filter: string) {
   try {
-    const categoriesResponse = await fetchAPI(
+    const categoriesResponse = await serverFetchApi(
       "/categories",
-      { populate: "*" },
+      { params: { populate: "*" }, }
     );
 
-    const articlesResponse = await fetchAPI(
+    const articlesResponse = await serverFetchApi(
       "/articles",
       filter
         ? {
-          filters: {
-            category: {
-              name: filter,
+          params: {
+            filters: {
+              category: {
+                name: filter,
+              },
             },
-          },
+          }
         }
         : {},
     );
