@@ -10,7 +10,7 @@ import { PRIVATE_BLOG_EDIT } from "@/services/link";
 import Loader from "@/app/[lang]/components/Loader";
 import PostList from "@/app/[lang]/views/post-list";
 import PageHeader from "@/app/[lang]/components/PageHeader";
-import { clientFetchAPI } from "@/app/[lang]/utils/client-fetch-api";
+import { clientFetchApi } from '@/services/request/client-fetch-api';
 
 interface Meta {
   pagination: {
@@ -50,7 +50,7 @@ export default function Blog () {
           }
         }
       };
-      const responseData = await clientFetchAPI('/articles', { params });
+      const responseData = await clientFetchApi('/articles', { params });
       setData(start === 0 ? responseData.data.data : (prevData: Array<any>) => [...prevData, ...responseData.data.data]);
 
       setMeta(responseData.data.meta);

@@ -2,7 +2,9 @@
 
 // outsource dependencies
 import { FormEvent } from "react";
-import { clientFetchAPI } from "@/app/[lang]/utils/client-fetch-api";
+
+// local dependencies
+import { clientFetchApi } from '@/services/request/client-fetch-api';
 
 enum Article {
   title = 'title',
@@ -15,7 +17,7 @@ export function EditForm () {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
-    const result = await clientFetchAPI('/articles', {
+    const result = await clientFetchApi('/articles', {
       method: 'POST',
       body: {
         data: {
